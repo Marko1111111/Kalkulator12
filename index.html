@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+  <meta charset="UTF-8">
+  <title>Kalkulator</title>
+  <style>
+    /* Animirano ozadje */
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: linear-gradient(-45deg, #ff9a9e, #fad0c4, #fbc2eb, #a1c4fd);
+      background-size: 400% 400%;
+      animation: gradientAnimation 15s ease infinite;
+    }
+
+    @keyframes gradientAnimation {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* Animiran predmet – lebdeči krog */
+    .floating-circle {
+      position: absolute;
+      width: 80px;
+      height: 80px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      top: 10%;
+      left: 10%;
+      animation: floatCircle 10s infinite ease-in-out alternate;
+      z-index: 0;
+    }
+
+    @keyframes floatCircle {
+      0%   { transform: translate(0, 0); }
+      50%  { transform: translate(400px, 200px); }
+      100% { transform: translate(800px, 0); }
+    }
+
+    /* Animirane črte */
+    .lines {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      z-index: 0;
+    }
+
+    .line {
+      position: absolute;
+      width: 200%;
+      height: 2px;
+      background: rgba(255, 255, 255, 0.15);
+      animation: moveLine 8s linear infinite;
+    }
+
+    .line:nth-child(1) { top: 20%; animation-delay: 0s; }
+    .line:nth-child(2) { top: 40%; animation-delay: 2s; }
+    .line:nth-child(3) { top: 60%; animation-delay: 4s; }
+    .line:nth-child(4) { top: 80%; animation-delay: 6s; }
+
+    @keyframes moveLine {
+      0%   { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+
+    /* Kalkulator */
+    #calculator {
+      background: rgba(255, 255, 255, 0.95);
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+      width: 260px;
+      backdrop-filter: blur(8px);
+      z-index: 1;
+      position: relative;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      font-size: 20px;
+      margin-bottom: 10px;
+      text-align: right;
+      border: none;
+      border-radius: 5px;
+      box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.2);
+    }
+
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    button {
+      padding: 15px;
+      font-size: 18px;
+      cursor: pointer;
+      border: none;
+      border-radius: 5px;
+      background: #eeeeee;
+      transition: background 0.2s;
+    }
+
+    button:hover {
+      background: #ddd;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Animirane ozadnje komponente -->
+<div class="lines">
+  <div class="line"></div>
+  <div class="line"></div>
+  <div class="line"></div>
+  <div class="line"></div>
+</div>
+<div class="floating-circle"></div>
+
+<!-- Kalkulator -->
+<div id="calculator">
+  <input type="text" id="display" readonly>
+  <div class="buttons">
+    <button onclick="append('7')">7</button>
+    <button onclick="append('8')">8</button>
+    <button onclick="append('9')">9</button>
+    <button onclick="append('/')">/</button>
+
+    <button onclick="append('4')">4</button>
+    <button onclick="append('5')">5</button>
+    <button onclick="append('6')">6</button>
+    <button onclick="append('*')">*</button>
+
+    <button onclick="append('1')">1</button>
+    <button onclick="append('2')">2</button>
+    <button onclick="append('3')">3</button>
+    <button onclick="append('-')">-</button>
+
+    <button onclick="append('0')">0</button>
+    <button onclick="append('.')">.</button>
+    <button onclick="calculate()">=</button>
+    <button onclick="append('+')">+</button>
+
+    <button onclick="clearDisplay()" style="grid-column: span 4;">C</button>
+  </div>
+</div>
+
+<script>
+  let display = document.getElementById("display");
+
+  function append(value) {
+    display.value += value;
+  }
+
+  function clearDisplay() {
+    display.value = "";
+  }
+
+  function calculate() {
+    try {
+      let correctResult = eval(display.value);
+
+      // Dodamo namerno napako ±5 do ±15
+      let offset = Math.floor(Math.random() * 11) + 5; // 5–15
+      let sign = Math.random() < 0.5 ? -1 : 1;
+      let wrongResult = Math.round(correctResult + sign * offset);
+
+      if (wrongResult === Math.round(correctResult)) {
+        wrongResult += sign; // zagotovo napačno
+      }
+
+      display.value = wrongResult;
+    } catch {
+      display.value = "Napaka";
+    }
+  }
+</script>
+
+</body>
+</html>
